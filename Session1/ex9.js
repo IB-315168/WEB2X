@@ -25,4 +25,26 @@ function listToArray(list) {
     return array
 }
 
-console.log(listToArray(arrayToList([10,20])))
+function prepend(valueAdd, listAdd) {
+    let list = {
+        value: valueAdd,
+        rest: listAdd
+    }
+
+    return list
+}
+
+function getNth(n, list) {
+    for(let i = 0; i < n; i++) {
+        list = list.rest
+
+        if(list === null) {
+            return undefined
+        }
+    }
+
+    return list.value
+}
+
+console.log(arrayToList([10,20]))
+console.log(getNth(3, prepend(7, arrayToList([10,20]))))
