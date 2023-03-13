@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>TicTacToe</title>
+    <style>
+        body {
+            display: flex;
+        }
+
+        button {
+            background-color: #4caf50;
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 35px;
+            margin: 4px 2px;
+            cursor: pointer;
+            width: 250px;
+            height: 250px;
+        }
+
+        #controls {
+            top: 0px;
+            float: right;
+            text-align: center;
+        }
+
+        #controls button {
+            width: 250px;
+            height: 125px;
+        }
+
+        #controls p {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        #controls #turn {
+            font-weight: bold;
+            font-size: 26px;
+        }
+
+        button:hover {
+            background-color: #8bb68c;
+            color: rgb(0, 0, 0);
+            transition: 250ms; 
+        }
+
+        button:disabled {
+            background-color: #7d7d7d;
+            color: rgb(0, 0, 0);
+            transition: 250ms;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="wrapper">
+        <table>
+            <tr>
+                <td>
+                    <button id="1"></button>
+                    <button id="2"></button>
+                    <button id="3"></button>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button id="4"></button>
+                    <button id="5"></button>
+                    <button id="6"></button>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button id="7"></button>
+                    <button id="8"></button>
+                    <button id="9"></button>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div id="controls">
+        <p>Turn:</p>
+        <p id="turn">X</p>
+        <button id="restart">Restart</button>
+    </div>
+
+    <script>
+        let turn = "X";
+        let game = [];
+        const wrapper = document.getElementById("wrapper");
+        const buttons = wrapper.getElementsByTagName("button");
+        const turnFlagText = document.getElementById("turn");
+
+        document.getElementById("restart").addEventListener("click", (event) => {
+            game = [];
+            turn = "X";
+            for (const element of buttons) {
+                element.innerHTML = "";
+                element.disabled = false;
+            }
+
+            turnFlagText.innerHTML = turn;
+        });
+
+        wrapper.addEventListener("click", (event) => {
+            const isButton = event.target.nodeName === "BUTTON";
+            if (!isButton) {
+                return;
+            }
+
+            //Disable the field, so that it's locked in place
+            event.target.disabled = true;
+
+            //Set marker and switch turn
+            if (turn === "X") {
+                event.target.innerHTML = "X";
+                turn = "O";
+            } else {
+                event.target.innerHTML = "O";
+                turn = "X";
+            }
+
+            //Check if it was a winning move
+            let indicator = checkWin(game, event);
+
+            if (indicator === 1) {
+                turn = event.target.innerHTML + " won";
+
+                for (const element of buttons) {
+                    element.disabled = true;
+                }
+            }
+            if (indicator === 2) {
+                turn = "It's a draw!";
+            }
+
+            
+            turnFlagText.innerHTML = turn;
+        });
+
+        function checkWin(game, event) {
+            game[event.target.id - 1] = event.target.innerHTML;
+
+            for (let i = 0; i < 3; i++) {
+                //Some of these statements could be merged, however, for readability, 
+                // I've decided to keep them separate.
+
+                //Row check
+                if (game[i] != undefined) {
+                    if (game[i] === game[i + 3] && game[i + 3] === game[i + 6])
+                        return 1;
+                }
+
+                //Column check
+                if (game[3 * i] != undefined) {
+                    if (
+                        game[3 * i] === game[3 * i + 1] &&
+                        game[3 * i + 1] === game[3 * i + 2]
+                    )
+                        return 1;
+                }
+
+                //Diagonal check
+                if (game[0] != undefined) {
+                    if (game[0] === game[4] && game[4] === game[8]) return 1;
+                }
+
+                if (game[2] != undefined) {
+                    if (game[2] === game[4] && game[4] === game[6]) return 1;
+                }
+            }
+
+            //Draw check
+            if (
+                game.length === 9 &&
+                !game.includes(undefined)
+            ) {
+                return 2;
+            }
+
+            return 0;
+        }
+    </script>
+</body>
+
+</html>
